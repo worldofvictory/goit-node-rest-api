@@ -1,12 +1,12 @@
 import { nanoid } from "nanoid";
-import { listContacts, getContactById, removeContact, addContact } from "../services/contactsServices.js";
+import { listContacts, addContact, getContactById, removeContact } from "../services/contactsServices.js";
 import { promises as fs } from "fs";
-import { contactSchema }  from '../schemas/contactsSchemas.js';
+import { createContactSchema }   from '../schemas/contactsSchemas.js';
 import { validateBody } from '../helpers/validateBody.js';
-import HttpError from 'http-errors';
+import HttpError from "../helpers/HttpError.js";
 import { updateContactSchema } from '../schemas/contactsSchemas.js'
 
-const addContactValidationMiddleware = validateBody(contactSchema);
+
 
 
 
@@ -21,71 +21,57 @@ export const getAllContacts = async (req, res) => {
 
 export const getOneContact = async (req, res) => {
     try {
+        const { id } = req.params;
+        const contact = await getContactById(id);
+        if (contact) {
+            res.status(200).json(contact);
+        } else {
+            res.status(404).json({ message: "Not found" });
+        }
+    } 
+    catch (error) { 
+        res.status(500).json({ message: error.message });
+    } 
+}; 
+        
        
-        const contactsDB = await getContactById();
-        const contacts = JSON.parse(contactsDB);
-        const contact = contacts.find(item => item.id === req.params.id)
-        res.status(200).json(contact);
-    }
-    catch (error) {
-        res.status(404).json({ message: "Not found" });
+  
+
+export const deleteContact = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Викликаємо функцію removeContact для видалення контакту за id
+        const deleteContact = await removeContact(id)
+
+        if (deleteContact) {
+            res.status(200).json(deleteContact);
+        } else {
+            res.status(404).json({ message: "Not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
-export const deleteContact = async (req, res) => {
- try {
-        const contactsDB = await removeContact();
-        const contacts = JSON.parse(contactsDB);
-        const { id } = req.params;
-
-        const contactIndex = contacts.findIndex(item => item.id === id);
-        if (contactIndex === -1) {
-            return res.status(404).json({ message: "Not found" });
-        }
-
-    
-        const [removedContact] = contacts.splice(contactIndex, 1);
-
-        await fs.writeFile('./db/contacts.json', JSON.stringify(contacts, null, 2));
-
-        res.status(200).json(removedContact);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-    };
-
-
-
-export const createContact = [
-    addContactValidationMiddleware, async (req, res) => {
+export const createContact = async ( req, res, next) => {
         try {
             const { name, email, phone } = req.body;
-            if (!name || !email || !phone) {
-                return res.status(400).json({ message: "Missing required fields" });
-            }
-            const newContact = {
-                id: nanoid(),
-                name,
-                email,
-                phone
-            };
-            //save user in DB
-            const contactsDB = await addContact();
-            const contacts = JSON.parse(contactsDB); //достаю фізично масив
-            contacts.push(newContact); //в масив записала новий контакт
-            await fs.writeFile('./db/contacts.json', JSON.stringify(contacts, null, 2)); //повністю переписала файл contacts.json
-            res.status(201).json(newContact);
+             await createContactSchema.validateAsync({ name, email, phone });
+                const newContact = await addContact(name, email, phone)
+                  if (newContact) {
+        res.status(201).json(newContact);
+    }
+            
+            
         }
       catch (error) {
-      if (error.status) {
-        const message = error.message || HttpError(error.status).message;
-        res.status(error.status).json({ message });
-      } else {
-        res.status(500).json({ message: "Internal Server Error" });
-      }
+     throw HttpError(400, error.message);
         }
     }
-];
+
+
+
 
 export const updateContact = async (req, res) => {
   try {
