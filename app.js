@@ -3,8 +3,9 @@ import morgan from "morgan";
 import cors from "cors";
 
 import contactsRouter from "./routes/contactsRouter.js";
+export const app = express();
 
-const app = express();
+
 
 app.use(morgan("tiny"));
 app.use(cors());
