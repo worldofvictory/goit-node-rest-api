@@ -67,7 +67,7 @@ export const createContact = async (req, res, next) => {
             throw HttpError(400);
         }
         const { name, email, phone } = req.body;
-        const newContact = await Contact.create(name, email, phone);  
+        const newContact = await Contact.create({ name, email, phone });  
         res.status(201).json(newContact);
     } catch (error) {
         next(error);  
