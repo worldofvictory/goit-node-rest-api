@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { app } from "./app.js";
+import { app } from "./app";
 import 'dotenv/config'; 
 
-const { MONGO_URL, PORT = 3000 } = process.env;
+const { MONGO_URL, PORT = 3001 } = process.env;
 
   mongoose
   .connect(MONGO_URL)
