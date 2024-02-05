@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
-import { app } from "./app";
+import { app } from "./app.js";
 import 'dotenv/config'; 
 
-const { MONGO_URL, PORT = 3001 } = process.env;
+
+
+
+
+const { MONGO_URL, PORT = 3000 } = process.env;
 
   mongoose
-  .connect(MONGO_URL)
+  .connect('mongodb+srv://arizona130892:Mino2019.@cluster0.x4udvyc.mongodb.net/db-contacts')
   .then(() => {
     app.listen(PORT, () => {
       console.log("Database connection successful");
