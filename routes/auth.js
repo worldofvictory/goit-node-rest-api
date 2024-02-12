@@ -8,7 +8,7 @@ import {
     current,
     logout
 } from "../controllers/auth.js";
-import {authenticate} from "../middlewares/authenticate.js"
+import {authenticate} from "../helpers/autenticate.js"
 const authRouter = express.Router();
 authRouter.post("/register", validateBody(schema.registerSchema), register);
 authRouter.post("/login", validateBody(schema.loginSchema), login);
