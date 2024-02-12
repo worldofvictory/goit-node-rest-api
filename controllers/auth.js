@@ -1,4 +1,4 @@
-import { User } from ("../models/users.js");
+import { User } from "../models/users.js";
 //import registerSchema from ('../schemas/usersSchemas')
 import HttpError from "../helpers/HttpError.js";
 import bcrypt from "bcrypt";
