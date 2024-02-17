@@ -15,10 +15,11 @@ const userSchema = new Schema(
         subscription: {
             type: String,
             enum: ["starter", "pro", "business"],
+            required: false,
             default: "starter"
         },
         token: String
-    });
+    }, { versionKey: false, timestamps: true });
     userSchema.post("save", handleMongooseError);
 
 export const User = model('user', userSchema);

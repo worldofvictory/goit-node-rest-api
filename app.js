@@ -1,7 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-const {  PORT = 3000 } = process.env;
+
 
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/auth.js";
