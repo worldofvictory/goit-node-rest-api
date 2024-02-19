@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 const { SECRET_KEY } = process.env;
 
 export const register = async (req, res, next) => {
-    try {
+    
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (user) {
@@ -20,15 +20,14 @@ export const register = async (req, res, next) => {
                 user: {
                     email: newUser.email,
                     subscription: newUser.subscription,
-                }
-            })
-    } catch (error) {
-        next(error)
-    }
-};
+                    token
+           }
+    })
+}
+
 
 export const login = async (req, res, next) => {
-    try {
+   
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
@@ -49,11 +48,8 @@ export const login = async (req, res, next) => {
             user: {
                 email: user.email,
                 subscription: user.subscription,
-            }
-        })
-    } catch (error) {
-        next(error)
-    }
+           }
+    })
 }
 
 export const getCurrent = async (req, res, next) => {
