@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { HandleMongooseError } from "../helpers/HandleMongooseError.js";
+import { handleMongooseError } from "../helpers/HandleMongooseError.js";
 import Joi from "joi";
 
 const userSchema = new Schema({
@@ -36,6 +36,6 @@ export const schema = {
     loginSchema
 }
 
-userSchema.post("save", HandleMongooseError);
+userSchema.post("save", handleMongooseError);
 
 export const User = model('user', userSchema);
