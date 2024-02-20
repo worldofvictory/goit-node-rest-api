@@ -1,12 +1,12 @@
 import { User } from "../models/users.js";
-//import registerSchema from ('../schemas/usersSchemas')
 import { catchAsync, HttpError } from "../helpers/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-const { SECRET_KEY = 'tttttttttttttttttttt' }  = process.env;
+const { SECRET_KEY } = process.env;
+
 
 export const register = catchAsync(async (req, res) => {
     
