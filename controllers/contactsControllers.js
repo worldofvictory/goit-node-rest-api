@@ -2,7 +2,7 @@ import { listContacts, addContact, getContactById, removeContact } from "../serv
 
 import { createContactSchema }   from '../schemas/contactsSchemas.js';
 
-import  HttpError  from "../helpers/HttpError.js";
+import { HttpError } from "../helpers/index.js";
 import { updateContactSchema } from '../schemas/contactsSchemas.js';
 import { Contact } from "../models/contacts.js";
 

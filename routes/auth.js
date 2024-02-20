@@ -1,7 +1,7 @@
 import express from "express";
-import { schema } from "../models/users.js";
-import { validateBody } from "../helpers/validateBody.js"
-import { autenticate } from "../helpers/autenticate.js"
+import { loginSchema, registerSchema } from "../schemas/usersSchemas.js";
+import { validateBody } from "../helpers/index.js"
+import { autenticate } from "../helpers/index.js"
 import {
     register,
     login, 
@@ -10,9 +10,9 @@ import {
 } from "../controllers/auth.js";
 
 const authRouter = express.Router();
-authRouter.post("/register", validateBody(schema.registerSchema), register);
-authRouter.post("/login", validateBody(schema.loginSchema), autenticate, login);
-authRouter.get("/current", autenticate, getCurrent);
+authRouter.post("/register", validateBody(registerSchema), register);
+authRouter.post("/login", validateBody(loginSchema), login);
 authRouter.post("/logout", autenticate, logout);
+authRouter.get("/current", autenticate, getCurrent);
 
 export default authRouter;

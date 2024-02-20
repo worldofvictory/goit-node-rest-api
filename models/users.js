@@ -1,41 +1,32 @@
-import { model, Schema } from 'mongoose';
-import { handleMongooseError } from "../helpers/HandleMongooseError.js";
-import Joi from "joi";
+import { Schema, model } from "mongoose";
+import { subsList } from "../helpers/index.js";
+import { handleMongooseError } from "../helpers/handleMongooseError.js";
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
     password: {
-        type: String,
-        required: [true, 'Set password for user'],
+      type: String,
+      required: [true, "Set password for user"],
     },
     email: {
-        type: String,
-        required: [true, 'Email is required'],
-        unique: true,
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
     },
     subscription: {
-        type: String,
-        enum: ["starter", "pro", "business"],
-        required: false,
-        default: "starter"
+      type: String,
+      enum: subsList,
+      default: "starter",
     },
-    token: String
-}, { versionKey: false, timestamps: true });
-
-const registerSchema = Joi.object({
-    password: Joi.string().required(),
-    email: Joi.string().required(),
-})
-
-const loginSchema = Joi.object({
-    password: Joi.string().required(),
-    email: Joi.string().required()
-})
-
-export const schema = {
-    registerSchema,
-    loginSchema
-}
-
+    token: { type: String, default: "" },
+  },
+  {
+    versionKey: false,
+    minlength: 6,
+    timestamps: true,
+  }
+);
 userSchema.post("save", handleMongooseError);
+export const User = model("user", userSchema);
 
-export const User = model('user', userSchema);
+
