@@ -1,6 +1,13 @@
-export default (fn) => (req, res, next) => {
-  fn(req, res, next).catch((err) => {
-    console.log(err);
-    next(err);
-  });
+const catchAsync = (ctrl) => {
+  const fn = async (req, res, next) => {
+    try {
+      await ctrl(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  return fn;
 };
+
+export default catchAsync;

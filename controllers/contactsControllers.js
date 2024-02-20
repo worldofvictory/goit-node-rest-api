@@ -1,28 +1,34 @@
-import { listContacts, addContact, getContactById, removeContact } from "../services/contactsServices.js";
-
-import { createContactSchema }   from '../schemas/contactsSchemas.js';
-
-import { HttpError } from "../helpers/index.js";
-import { updateContactSchema } from '../schemas/contactsSchemas.js';
+import { HttpError, catchAsync } from "../helpers/index.js";
 import { Contact } from "../models/contacts.js";
 
 
-
-
-
-export const getAllContacts = async (req, res, next) => {
+export const getAllContacts = catchAsync(async (req, res) => {
     try {
-        const contacts = await Contact.find(); 
-        res.json(contacts); // Повертаємо масив контактів у форматі JSON зі статусом 200
+         const { _id: owner } = req.user;
+        const { page = 1, limit = 20, favorite } = req.query;
+        const skip = (page - 1) * limit;
+
+  const isFavorite = favorite === "true";
+        const contacts = await Contact.find(
+            { owner, favorite: isFavorite },
+    "-createdAt -updatedAt",
+    {
+      skip,
+      limit,
+    }
+        ).populate("owner", "email");; 
+        
+        res.json(contacts); 
     } catch (error) {
         next(error)
 }
-};
+});
 
-export const getOneContact = async (req, res, next) => {
+export const getOneContact = catchAsync(async (req, res, next) => {
     try {
+        const { _id: owner } = req.user;
         const { id } = req.params;
-        const contact = await Contact.findById(id);
+        const contact = await Contact.findById(id).where("owner").equals(owner);
        if (!contact)  {
         throw HttpError(404);
     }
@@ -31,18 +37,18 @@ export const getOneContact = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-};
+});
 
         
        
   
 
-export const deleteContact = async (req, res, next) => {
+export const deleteContact = catchAsync(async (req, res, next) => {
     try {
+        const { _id: owner } = req.user;
         const { id } = req.params;
-
-        // Викликаємо функцію removeContact для видалення контакту за id
-        const deleteContact = await Contact.findByIdAndDelete(id)
+        const deleteContact = await Contact.findByIdAndDelete(id).where("owner")
+    .equals(owner);
 
         if (!deleteContact) {
             
@@ -52,12 +58,13 @@ export const deleteContact = async (req, res, next) => {
     } catch (error) {
         next(error) 
     }
-};
+});
 
-export const createContact = async (req, res, next) => {
+export const createContact = catchAsync(async (req, res, next) => {
     try {
+        const { _id: owner } = req.user;
         const { name, email, phone } = req.body;
-        const newContact = await Contact.create({ name, email, phone });
+        const newContact = await Contact.create({...req.body, owner });
         if (newContact) {
             res.status(201).json(newContact);
         } else {
@@ -66,13 +73,14 @@ export const createContact = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-};
+});
 
 
 
 
-export const updateContact = async (req, res, next) => {
+export const updateContact = catchAsync(async (req, res, next) => {
     try {
+    const { _id: owner } = req.user;
     const { id } = req.params;
     const data = req.body;
     
@@ -80,7 +88,8 @@ export const updateContact = async (req, res, next) => {
         res.status(400).json({ "message": "Body must have at least one field" });
     }
 
-    const changeContact = await Contact.findByIdAndUpdate(id, data);
+        const changeContact = await Contact.findByIdAndUpdate(id, req.body, { new: true })
+    .where("owner").equals(owner);
     if (changeContact) {
         res.status(200).json(changeContact);
         }else {
@@ -89,13 +98,15 @@ export const updateContact = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-};
+});
 
-export const updateStatusContact = async (req, res, next) => {
+export const updateStatusContact = catchAsync(async (req, res, next) => {
     try {
+         const { _id: owner } = req.user;
         const { id } = req.params;
         const data = req.body;
-        const favoriteContact = await Contact.findByIdAndUpdate(id, data, { new: true });
+        const favoriteContact = await Contact.findByIdAndUpdate(id, req.body, { new: true })
+     .where("owner").equals(owner);
 
     if (favoriteContact) {
         res.status(200).json(favoriteContact);
@@ -105,4 +116,4 @@ export const updateStatusContact = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-}
+})

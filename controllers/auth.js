@@ -66,7 +66,7 @@ export const getCurrent = catchAsync(async (req, res) => {
 export const logout = catchAsync(async (req, res) => {
     
         const { _id } = req.user;
-        await User.findByIdAndUpdate(_id, { token: ' ' });
+        await User.findByIdAndUpdate(_id, { token: " " });
          res.status(204).json();      
   
 })
