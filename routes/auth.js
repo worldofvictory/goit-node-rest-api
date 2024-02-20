@@ -1,5 +1,5 @@
 import express from "express";
-import  { registerSchema, loginSchema} from "../schemas/usersSchemas.js";
+import { schema } from "../models/users.js";
 import { validateBody } from "../helpers/validateBody.js"
 import { autenticate } from "../helpers/autenticate.js"
 import {
@@ -10,8 +10,8 @@ import {
 } from "../controllers/auth.js";
 
 const authRouter = express.Router();
-authRouter.post("/register", validateBody(registerSchema), register);
-authRouter.post("/login", validateBody(loginSchema), autenticate, login);
+authRouter.post("/register", validateBody(schema.registerSchema), register);
+authRouter.post("/login", validateBody(schema.loginSchema), autenticate, login);
 authRouter.get("/current", autenticate, getCurrent);
 authRouter.post("/logout", autenticate, logout);
 
