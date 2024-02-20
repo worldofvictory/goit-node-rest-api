@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-const { SECRET_KEY } = process.env;
+
+const {SECRET_KEY} = process.env;
 
 
 export const register = catchAsync(async (req, res) => {

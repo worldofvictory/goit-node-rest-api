@@ -26,7 +26,7 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
-userSchema.post("save", handleMongooseError);
+
 export const User = model("user", userSchema);
 
 

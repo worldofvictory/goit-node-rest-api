@@ -1,9 +1,16 @@
 import Joi from "joi";
 
 export const createContactSchema = Joi.object({
-name: Joi.string().required(),
-  email: Joi.string().email().required(),
-    phone: Joi.string().required(),
+name: Joi.string().required().messages({ "any.required": "Missing required name field" }),
+   email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .required()
+    .messages({ "any.required": "Missing required email field" }),
+
+  phone: Joi.string().required().messages({
+    "any.required": "Missing required phone field",
+  }),
+
   favorite: Joi.boolean(),
 })
 
