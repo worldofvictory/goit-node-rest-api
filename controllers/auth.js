@@ -3,11 +3,14 @@ import { catchAsync, HttpError } from "../helpers/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import fs from "fs/promises"
+import gravatar from "gravatar";
+import path from "path";
 dotenv.config();
 
 
 const {SECRET_KEY} = process.env;
-
+const avatarsDir = path.resolve("pubblic", "avatars");
 
 export const register = catchAsync(async (req, res) => {
     
@@ -17,7 +20,8 @@ export const register = catchAsync(async (req, res) => {
         throw HttpError(409, "Email in use");
     }
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ ...req.body, password: hashPassword });
+    const avatarURL = gravatar.url(email);
+    const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL });
     res.status(201).json(
         {
             user: {
@@ -69,4 +73,26 @@ export const logout = catchAsync(async (req, res) => {
         await User.findByIdAndUpdate(_id, { token: " " });
          res.status(204).json();      
   
+})
+
+export const update = catchAsync(async (req, res) => {
+    const { _id } = req.user;  //id користувача який залогінився і може міняти свою аватарку
+     if (!req.file) {
+    throw HttpError(400, "Please, attach avatar.It is required.");
+  }
+
+    const { path: tempUpload, originalname } = req.file;
+    const fileName = `${_id}_${originalname}`;
+    const resultUpload = path.resolve(avatarsDir, fileName);
+    await fs.rename(tempUpload, resultUpload);
+    const avatarURL = path.join("avatars", fileName);
+  await User.findByIdAndUpdate(_id, { avatarURL });  //витягуючи ід з req міняємо аватарку
+ res.status(200).json({
+     avatarURL,
+    
+
+    });
+    
+
+
 })
