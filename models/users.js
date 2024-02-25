@@ -18,11 +18,21 @@ const userSchema = new Schema(
       enum: subsList,
       default: "starter",
     },
+
+    verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, 'Verify token is required'],
+  },
     avatarURL: {
       type: String,
       required: true,
 
     },
+    
     token: { type: String, default: "" },
   },
   {
