@@ -14,7 +14,7 @@ import {
 
 const authRouter = express.Router();
 authRouter.post("/register", validateBody(registerSchema), register);
-authRouter.get("/verify:verificationToken", verifyEmail);
+authRouter.get("/verify/:verificationToken", verifyEmail);
 authRouter.post("/veriry", validateBody(emailSchema), resendVerifyEmail)
 authRouter.post("/login", validateBody(loginSchema), login);
 authRouter.post("/logout", autenticate, logout);
