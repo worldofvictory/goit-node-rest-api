@@ -10,7 +10,8 @@ dotenv.config();
 import { nanoid } from "nanoid";
 
 
-const {SECRET_KEY, BASE_URL} = process.env;
+const { SECRET_KEY, BASE_URL } = process.env;
+
 const avatarsDir = path.resolve("pubblic", "avatars");
 
 export const register = catchAsync(async (req, res) => {
@@ -27,7 +28,7 @@ export const register = catchAsync(async (req, res) => {
     const verifyEmail = {
         to: email,
         subject: "Verify email",
-        html: `<a target="_blank" href = "${BASE_URL}/api/users/verify/${verificationToken}">Click verify email</a> `
+        html: `<a target="_blank" href = "${BASE_URL}/api/users/verify/${verificationToken}">Click verify email</a>`,
     };
     await sendEmail(verifyEmail);
     res.status(201).json(
@@ -44,7 +45,7 @@ export const verifyEmail = catchAsync(async (req, res) => {
     if (!user) {
         throw HttpError(404, "User not found");
     }
-    await user.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
         user._id,
         {
             verify: true,
@@ -69,7 +70,7 @@ export const resendVerifyEmail = catchAsync(async (req, res) => {
     const verifyEmail = {
         to: email,
         subject: "Verify email",
-        html: `<a target="_blank" href = "${BASE_URL}/api/users/verify/${user.verificationToken}">Click verify email</a> `
+        html: `<a target="_blank" href = "${BASE_URL}/api/users/verify/${user.verificationToken}">Click verify email</a>`
     };
     await sendEmail(verifyEmail);
     

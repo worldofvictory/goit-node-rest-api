@@ -7,7 +7,8 @@ import 'dotenv/config';
 
 
 
-const { MONGO_URL, PORT=3000 } = process.env;
+const { MONGO_URL, PORT = 3000 } = process.env;
+
 
   mongoose
   .connect('mongodb+srv://arizona130892:Mino2019.@cluster0.x4udvyc.mongodb.net/db-contacts')
